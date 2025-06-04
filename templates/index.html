@@ -5,73 +5,108 @@
     <title>CGPA Update Calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        :root {
+            --primary-color: #3498db;
+            --background: #f4f6fa;
+            --text: #333;
+            --white: #fff;
+            --border: #ddd;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f7f9fc;
-            color: #333;
-            padding: 40px;
+            background: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
         }
+
         h1 {
             text-align: center;
-            color: #2c3e50;
-        }
-        form {
-            background: #fff;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .form-section {
+            color: var(--primary-color);
             margin-bottom: 20px;
         }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
+
+        form {
+            background: var(--white);
+            max-width: 600px;
+            margin: auto;
+            padding: 30px 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
         }
-        input[type="number"], select {
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"],
+        select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
             box-sizing: border-box;
         }
+
         input[type="radio"] {
             margin-right: 6px;
         }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #repeated-fields {
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
         button {
-            background-color: #3498db;
-            color: white;
-            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 14px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             width: 100%;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #2980b9;
+            background-color: #2c80c8;
         }
-        hr {
-            margin-top: 40px;
-            border: none;
-            border-top: 1px solid #ccc;
-        }
+
         .result {
             max-width: 600px;
             margin: 30px auto;
-            background: #e9f7ef;
+            background: #eafaf1;
             border-left: 5px solid #2ecc71;
             padding: 20px;
-            border-radius: 6px;
+            border-radius: 10px;
         }
+
         .result h3 {
             margin-top: 0;
         }
+
+        @media (max-width: 600px) {
+            form {
+                padding: 25px 20px;
+            }
+        }
     </style>
+
     <script>
         function toggleRepeatedFields() {
             const show = document.querySelector('input[name="repeated"]:checked').value === 'yes';
@@ -111,14 +146,16 @@
 
         <div class="form-section">
             <label>Did you repeat any course this semester?</label>
-            <input type="radio" name="repeated" value="yes" onclick="toggleRepeatedFields()"> Yes
-            <input type="radio" name="repeated" value="no" checked onclick="toggleRepeatedFields()"> No
-        </div>
+            <div class="radio-group">
+                <label><input type="radio" name="repeated" value="yes" onclick="toggleRepeatedFields()"> Yes</label>
+                <label><input type="radio" name="repeated" value="no" checked onclick="toggleRepeatedFields()"> No</label>
+            </div>
 
-        <div class="form-section" id="repeated-fields" style="display: none;">
-            <label>Repeated Course Details</label>
-            <input type="number" name="repeated_gpa" step="0.01" min="0" max="4" placeholder="Old GPA of repeated course">
-            <input type="number" name="new_repeated_gpa" step="0.01" min="0" max="4" placeholder="New GPA of repeated course">
+            <div class="form-section" id="repeated-fields" style="display: none;">
+                <label>Repeated Course Details</label>
+                <input type="number" name="repeated_gpa" step="0.01" min="0" max="4" placeholder="Old GPA of repeated course">
+                <input type="number" name="new_repeated_gpa" step="0.01" min="0" max="4" placeholder="New GPA of repeated course">
+            </div>
         </div>
 
         <div class="form-section">
@@ -138,7 +175,7 @@
             {% else %}
                 <h3>CGPA Result</h3>
                 <p><strong>Updated CGPA:</strong> {{ result.updated_cgpa }}</p>
-                <p><strong>Courses Completed:</strong> {{ result.course_completed }}</p>
+                <p><strong>Total Courses After Update:</strong> {{ result.course_completed }}</p>
                 <p><strong>New Courses:</strong> {{ result.new_courses }}</p>
                 {% if result.repeated %}
                     <p><strong>Repeated Course Old GPA:</strong> {{ result.repeated_gpa }}</p>
