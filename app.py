@@ -11,8 +11,9 @@ def index():
             credits_completed = int(request.form['credits_completed'])
             course_completed = credits_completed / 3
 
-            if credits_completed % 3 != 0:
-                raise ValueError("Credits completed must be divisible by 3.")
+            if credits_completed != 0 and credits_completed % 3 != 0:
+                raise ValueError("Credits completed must be divisible by 3 or equal to 0.")
+
             repeated = request.form.get('repeated') == 'yes'
             repeated_gpa = float(request.form['repeated_gpa']) if repeated else 0
             new_repeated_gpa = float(request.form['new_repeated_gpa']) if repeated else 0
