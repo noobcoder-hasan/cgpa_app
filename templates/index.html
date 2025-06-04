@@ -31,11 +31,45 @@
       color: var(--text);
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
       transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .toggle-theme {
+      padding: 8px 16px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      width: auto;
+      max-width: 180px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px 40px;
+    }
+
+    .card, .result {
+      flex: 1 1 500px;
     }
 
     .card {
@@ -43,8 +77,6 @@
       padding: 30px 40px;
       border-radius: 20px;
       box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-      width: 100%;
-      max-width: 550px;
     }
 
     h1 {
@@ -111,63 +143,29 @@
       background: #2c80c8;
     }
 
-    .page-container {
-      width: 100%;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .top-bar {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .toggle-theme {
-      padding: 8px 16px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      width: auto;
-      max-width: 180px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
     @keyframes fadeInSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .result {
-    background: var(--result-bg);
-    color: var(--result-text);
-    margin-top: 30px;
-    padding: 20px;
-    border-left: 5px solid #2a9d8f;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    animation: fadeInSlideUp 0.6s ease-out;
+      background: var(--result-bg);
+      color: var(--result-text);
+      padding: 20px;
+      border-left: 5px solid #2a9d8f;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      animation: fadeInSlideUp 0.6s ease-out;
     }
 
     .result h3 {
       margin-top: 0;
     }
 
-    @media (max-width: 600px) {
-      .card {
-        padding: 25px 20px;
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
@@ -198,24 +196,28 @@
 
     function toggleTheme() {
       const body = document.body;
-      body.classList.toggle("dark");
-      localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
+      const button = document.querySelector('.toggle-theme');
+      const dark = body.classList.toggle("dark");
+      localStorage.setItem("theme", dark ? "dark" : "light");
+      button.innerHTML = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
     }
 
     window.onload = () => {
-      if (localStorage.getItem("theme") === "dark") {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
         document.body.classList.add("dark");
+        document.querySelector('.toggle-theme').innerHTML = '☀️ Light Mode';
       }
     };
   </script>
 </head>
 
 <body>
-  <div class="page-container">
-    <div class="top-bar">
-      <button class="toggle-theme" onclick="toggleTheme()">🌙 Toggle Theme</button>
-    </div>
+  <div class="top-bar">
+    <button class="toggle-theme" onclick="toggleTheme()">🌙 Dark Mode</button>
+  </div>
 
+  <div class="main-container">
     <div class="card">
       <h1>CGPA Update Calculator</h1>
       <form method="POST">
@@ -249,26 +251,34 @@
 
         <div id="new-gpa-fields" class="form-section"></div>
 
+        <div class="form-section">
+          <label for="thesis_gpa">Thesis GPA (Optional)</label>
+          <input type="number" name="thesis_gpa" step="0.01" min="0" max="4" placeholder="e.g., 3.85">
+        </div>
+
         <button type="submit">Calculate Updated CGPA</button>
       </form>
+    </div>
 
-      {% if result %}
-      <div class="result">
-        {% if result.error %}
-        <p style="color: red;">{{ result.error }}</p>
-        {% else %}
-        <h3>CGPA Result</h3>
-        <p><strong>Updated CGPA:</strong> {{ result.updated_cgpa }}</p>
-        <p><strong>Total Courses After Update:</strong> {{ result.course_completed }}</p>
-        <p><strong>New Courses:</strong> {{ result.new_courses }}</p>
-        {% if result.repeated %}
-        <p><strong>Repeated Course Old GPA:</strong> {{ result.repeated_gpa }}</p>
-        <p><strong>Repeated Course New GPA:</strong> {{ result.new_repeated_gpa }}</p>
-        {% endif %}
-        {% endif %}
-      </div>
+    {% if result %}
+    <div class="result">
+      {% if result.error %}
+      <p style="color: red;">{{ result.error }}</p>
+      {% else %}
+      <h3>CGPA Result</h3>
+      <p><strong>Updated CGPA:</strong> {{ result.updated_cgpa }}</p>
+      <p><strong>Total Courses After Update:</strong> {{ result.course_completed }}</p>
+      <p><strong>New Courses:</strong> {{ result.new_courses }}</p>
+      {% if result.repeated %}
+      <p><strong>Repeated Course Old GPA:</strong> {{ result.repeated_gpa }}</p>
+      <p><strong>Repeated Course New GPA:</strong> {{ result.new_repeated_gpa }}</p>
+      {% endif %}
+      {% if result.has_thesis %}
+      <p><strong>Thesis GPA:</strong> {{ result.thesis_gpa }}</p>
+      {% endif %}
       {% endif %}
     </div>
+    {% endif %}
   </div>
 </body>
 </html>
