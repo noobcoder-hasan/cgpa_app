@@ -1,6 +1,6 @@
 
 
-**🎓 CGPA Update Calculator**
+## **🎓 CGPA Update Calculator**
 
 A simple and responsive web application built with **Flask** and **HTML/CSS/JavaScript** to calculate your updated CGPA, considering:
 
@@ -12,7 +12,7 @@ A simple and responsive web application built with **Flask** and **HTML/CSS/Java
 
 ---
 
-**🛠 Features**
+## **🛠 Features**
 
 * 📘 Form-based GPA input for new and repeated courses
 * 📊 Supports Thesis GPA with adjustable credit weight
