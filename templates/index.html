@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CGPA Update Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f7f9fc;
+            color: #333;
+            padding: 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        form {
+            background: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        input[type="radio"] {
+            margin-right: 6px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        hr {
+            margin-top: 40px;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+        .result {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #e9f7ef;
+            border-left: 5px solid #2ecc71;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        .result h3 {
+            margin-top: 0;
+        }
+    </style>
+    <script>
+        function toggleRepeatedFields() {
+            const show = document.querySelector('input[name="repeated"]:checked').value === 'yes';
+            document.getElementById('repeated-fields').style.display = show ? 'block' : 'none';
+        }
+
+        function updateCourseInputs() {
+            const count = parseInt(document.getElementById('new_courses').value || 0);
+            const container = document.getElementById('new-gpa-fields');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.name = 'new_gpas';
+                input.min = '0.0';
+                input.max = '4.0';
+                input.step = '0.01';
+                input.required = true;
+                input.placeholder = `GPA for new course ${i}`;
+                container.appendChild(input);
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <h1>CGPA Update Calculator</h1>
+
+    <form method="POST">
+        <div class="form-section">
+            <label for="current_cgpa">Current CGPA</label>
+            <input type="number" name="current_cgpa" step="0.01" min="0" max="4" required placeholder="e.g., 3.25">
+
+            <label for="credits_completed">Credits Completed</label>
+            <input type="number" name="credits_completed" step="1" min="1" required placeholder="e.g., 90">
+        </div>
+
+        <div class="form-section">
+            <label>Did you repeat any course this semester?</label>
+            <input type="radio" name="repeated" value="yes" onclick="toggleRepeatedFields()"> Yes
+            <input type="radio" name="repeated" value="no" checked onclick="toggleRepeatedFields()"> No
+        </div>
+
+        <div class="form-section" id="repeated-fields" style="display: none;">
+            <label>Repeated Course Details</label>
+            <input type="number" name="repeated_gpa" step="0.01" min="0" max="4" placeholder="Old GPA of repeated course">
+            <input type="number" name="new_repeated_gpa" step="0.01" min="0" max="4" placeholder="New GPA of repeated course">
+        </div>
+
+        <div class="form-section">
+            <label for="new_courses">Number of New Courses</label>
+            <input type="number" id="new_courses" name="new_courses" min="1" required placeholder="e.g., 4" onchange="updateCourseInputs()">
+        </div>
+
+        <div id="new-gpa-fields" class="form-section"></div>
+
+        <button type="submit">Calculate Updated CGPA</button>
+    </form>
+
+    {% if result %}
+        <div class="result">
+            {% if result.error %}
+                <p style="color: red;">{{ result.error }}</p>
+            {% else %}
+                <h3>CGPA Result</h3>
+                <p><strong>Updated CGPA:</strong> {{ result.updated_cgpa }}</p>
+                <p><strong>Courses Completed:</strong> {{ result.course_completed }}</p>
+                <p><strong>New Courses:</strong> {{ result.new_courses }}</p>
+                {% if result.repeated %}
+                    <p><strong>Repeated Course Old GPA:</strong> {{ result.repeated_gpa }}</p>
+                    <p><strong>Repeated Course New GPA:</strong> {{ result.new_repeated_gpa }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+
+</body>
+</html>
