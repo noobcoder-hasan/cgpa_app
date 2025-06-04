@@ -27,7 +27,7 @@ def index():
             total_course_completed = course_completed + new_courses
             result = {
                 'updated_cgpa': round(updated_cgpa, 3),
-                'course_completed': round(total_course_completed, 2),
+                'course_completed': total_course_completed,
                 'new_courses': new_courses,
                 'repeated': repeated,
                 'repeated_gpa': repeated_gpa,
